@@ -1,31 +1,38 @@
 const fs = require('fs');
-const { stat } = fs;
 const path = require('path');
 const { readdir } = require('node:fs/promises');
 
-const getFiles = async () => {
+fs.writeFile(path.join(__dirname, 'project-dist', 'bundle.css'), '', (err) => {
+  if (err) throw err;
+});
+
+const mergeStyles = async () => {
   try {
     const items = await readdir(path.join('05-merge-styles', 'styles'), {
       withFileTypes: true,
     });
-    const files = items.filter((item) => item.isFile());
+    const files = items.filter(
+      (item) => item.isFile() && item.name.endsWith('.css')
+    );
+
     for (const file of files) {
-      stat(
-        path.join('03-files-in-folder', 'secret-folder', file.name),
-        (err, stats) => {
-          if (err) throw new Error(err.message);
-          const split = file.name.split('.');
-          console.log(
-            `${split.filter((e, i, arr) => i !== arr.length - 1)} - ${
-              split[split.length - 1]
-            } - ${stats.size}`
-          );
-        }
+      const readableStream = fs.createReadStream(
+        path.join(path.join('05-merge-styles', 'styles'), file.name),
+        'utf-8'
       );
+      readableStream.on('data', (chunk) => {
+        fs.appendFile(
+          path.join(__dirname, 'project-dist', 'bundle.css'),
+          chunk,
+          (err) => {
+            if (err) throw err;
+          }
+        );
+      });
     }
   } catch (err) {
     console.error(err);
   }
 };
 
-getFiles();
+mergeStyles();
