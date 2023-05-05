@@ -15,11 +15,10 @@ const getFiles = async () => {
         path.join('03-files-in-folder', 'secret-folder', file.name),
         (err, stats) => {
           if (err) throw new Error(err.message);
+          const split = file.name.split('.');
           console.log(
-            `${file.name
-              .split('.')
-              .filter((e, i, arr) => i !== arr.length - 1)} - ${
-              file.name.split('.')[1]
+            `${split.filter((e, i, arr) => i !== arr.length - 1)} - ${
+              split[split.length - 1]
             } - ${stats.size}`
           );
         }
