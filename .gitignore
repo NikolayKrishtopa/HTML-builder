@@ -106,4 +106,4 @@ dist
 # The file generated per scripts
 02-write-file/inputs.txt
 04-copy-directory/files-copy
-05-merge-files/project-dist/bundle.css
+05-merge-styles/project-dist/bundle.css

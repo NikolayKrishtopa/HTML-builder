@@ -5,7 +5,6 @@ const { readdir } = require('node:fs/promises');
 const createDirCopy = async () => {
   fs.mkdir(path.join(__dirname, 'files-copy'), { recursive: true }, (err) => {
     if (err) throw err;
-    console.log('Папка была создана');
     copyFiles();
   });
 };
