@@ -50,3 +50,5 @@ const copyDir = async () => {
 };
 
 copyDir();
+
+module.exports = createDirCopy;
