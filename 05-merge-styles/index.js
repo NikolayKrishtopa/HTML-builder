@@ -8,7 +8,7 @@ fs.writeFile(path.join(__dirname, 'project-dist', 'bundle.css'), '', (err) => {
 
 const mergeStyles = async () => {
   try {
-    const items = await readdir(path.join('05-merge-styles', 'styles'), {
+    const items = await readdir(path.join(__dirname, 'styles'), {
       withFileTypes: true,
     });
     const files = items.filter(
@@ -17,7 +17,7 @@ const mergeStyles = async () => {
 
     for (const file of files) {
       const readableStream = fs.createReadStream(
-        path.join(path.join('05-merge-styles', 'styles'), file.name),
+        path.join(__dirname, 'styles', file.name),
         'utf-8'
       );
       readableStream.on('data', (chunk) => {
