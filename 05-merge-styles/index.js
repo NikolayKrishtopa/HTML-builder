@@ -2,13 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const { readdir } = require('node:fs/promises');
 
-fs.writeFile(path.join(__dirname, 'project-dist', 'bundle.css'), '', (err) => {
-  if (err) throw err;
-});
-
-const mergeStyles = async () => {
+const mergeStyles = async (srcDir, tgtFile) => {
+  fs.writeFile(tgtFile, '', (err) => {
+    if (err) throw err;
+  });
   try {
-    const items = await readdir(path.join(__dirname, 'styles'), {
+    const items = await readdir(srcDir, {
       withFileTypes: true,
     });
     const files = items.filter(
@@ -21,13 +20,9 @@ const mergeStyles = async () => {
         'utf-8'
       );
       readableStream.on('data', (chunk) => {
-        fs.appendFile(
-          path.join(__dirname, 'project-dist', 'bundle.css'),
-          chunk,
-          (err) => {
-            if (err) throw err;
-          }
-        );
+        fs.appendFile(tgtFile, chunk, (err) => {
+          if (err) throw err;
+        });
       });
     }
   } catch (err) {
@@ -35,4 +30,9 @@ const mergeStyles = async () => {
   }
 };
 
-mergeStyles();
+mergeStyles(
+  path.join(__dirname, 'styles'),
+  path.join(__dirname, 'project-dist', 'bundle.css')
+);
+
+module.exports = mergeStyles;
