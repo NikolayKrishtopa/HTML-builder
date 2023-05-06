@@ -3,37 +3,29 @@ const path = require('path');
 const { readdir } = require('node:fs/promises');
 
 // create the copy of directory including the files
-const createDirCopy = async () => {
-  fs.mkdir(path.join(__dirname, 'files-copy'), { recursive: true }, (err) => {
-    if (err) throw err;
-    copyFiles();
-  });
-};
-
-// creates the copies of all the files
-const copyFiles = async () => {
-  const items = await readdir(path.join(__dirname, 'files'), {
+const createDirCopy = async (srcDir, tgtDir) => {
+  const items = await readdir(srcDir, {
     withFileTypes: true,
   });
   const files = items.filter((item) => item.isFile());
-  files.forEach((f) => {
-    fs.writeFile(path.join(__dirname, 'files-copy', f.name), '', (err) => {
-      if (err) throw err;
-      const readableStream = fs.createReadStream(
-        path.join(__dirname, 'files', f.name),
-        'utf-8'
-      );
-      readableStream.on('data', (chunk) => {
-        fs.appendFile(
-          path.join(__dirname, 'files-copy', f.name),
-          chunk,
-          (err) => {
+  const dirs = items.filter((item) => !item.isFile());
+  fs.mkdir(tgtDir, { recursive: true }, (err) => {
+    if (err) throw err;
+    files.forEach((f) => {
+      fs.writeFile(path.join(tgtDir, f.name), '', (err) => {
+        if (err) throw err;
+        const readableStream = fs.createReadStream(path.join(srcDir, f.name));
+        readableStream.on('data', (chunk) => {
+          fs.appendFile(path.join(tgtDir, f.name), chunk, (err) => {
             if (err) throw err;
-          }
-        );
+          });
+        });
       });
     });
   });
+  dirs.forEach((dir) =>
+    createDirCopy(path.join(srcDir, dir.name), path.join(tgtDir, dir.name))
+  );
 };
 
 // head function
@@ -44,10 +36,16 @@ const copyDir = async () => {
       if (err) {
         throw err;
       }
-      createDirCopy();
+      createDirCopy(
+        path.join(__dirname, 'files'),
+        path.join(__dirname, 'files-copy')
+      );
     });
   } else {
-    createDirCopy();
+    createDirCopy(
+      path.join(__dirname, 'files'),
+      path.join(__dirname, 'files-copy')
+    );
   }
 };
 
