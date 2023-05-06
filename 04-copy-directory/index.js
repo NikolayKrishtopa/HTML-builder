@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { readdir } = require('node:fs/promises');
 
+// create the copy of directory including the files
 const createDirCopy = async () => {
   fs.mkdir(path.join(__dirname, 'files-copy'), { recursive: true }, (err) => {
     if (err) throw err;
@@ -9,6 +10,7 @@ const createDirCopy = async () => {
   });
 };
 
+// creates the copies of all the files
 const copyFiles = async () => {
   const items = await readdir(path.join(__dirname, 'files'), {
     withFileTypes: true,
@@ -34,6 +36,7 @@ const copyFiles = async () => {
   });
 };
 
+// head function
 const copyDir = async () => {
   const dir = await readdir(__dirname);
   if (!!dir.find((d) => d === 'files-copy')) {
