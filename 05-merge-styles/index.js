@@ -16,7 +16,7 @@ const mergeStyles = async (srcDir, tgtFile) => {
 
     for (const file of files) {
       const readableStream = fs.createReadStream(
-        path.join(__dirname, 'styles', file.name),
+        path.join(srcDir, file.name),
         'utf-8'
       );
       readableStream.on('data', (chunk) => {
