@@ -38,7 +38,7 @@ const buildHtml = async () => {
         readableStr.on('end', async () => {
           htmlContent = htmlContent.split(`{{${filename}}}`).join(fileContent);
           if (files.indexOf(file) === files.length - 1) {
-            fs.appendFile(
+            fs.writeFile(
               path.join(__dirname, 'project-dist', 'index.html'),
               htmlContent,
               (err) => {
